@@ -5,39 +5,42 @@ import (
 	"strings"
 )
 
-func Strings(d string, src ...string) string {
-	return strings.Join(src, d)
+func BytesToBytes(del []byte, src ...[]byte) []byte {
+	var tmp []byte
+	check := len(src) - 1
+	for i, v := range src {
+		tmp = append(tmp, v...)
+		if i < check {
+			tmp = append(tmp, del...)
+		}
+	}
+	return tmp
 }
 
-func StringsLinebreak(src ...string) string {
-	return strings.Join(src, "\n")
+func StringsToString(del string, src ...string) string {
+	return strings.Join(src, del)
 }
 
-func Concatenate(src ...string) (string, error) {
-
-	// build it...
-	// log.Printf("==> Files Changed % #v\n", src)
-	tmp := make([]byte, 0)
-	// tmp = append(tmp, []byte("/*//* GENERATED SOURCECODE*/ \n//* DO NOT EDIT BY HAND */\n\n")...)
-
-	for _, v := range src {
-		d, err := ioutil.ReadFile(v)
+func FilesToBytes(del string, src ...string) ([]byte, error) {
+	var tmp []byte
+	check := len(src) - 1
+	for i, srcfile := range src {
+		d, err := ioutil.ReadFile(srcfile)
 		if err != nil {
-			return "", err
+			return []byte{}, err
 		}
 		tmp = append(tmp, d...)
-		tmp = append(tmp, []byte("\n\n")...)
+		if i < check {
+			tmp = append(tmp, []byte(del)...)
+		}
 	}
-
-	return string(tmp), nil
+	return tmp, nil
 }
 
-func ConcatenateToFile(file string, src ...string) error {
-	// log.Printf("--> Write target %q\n", target)
-	con, err := Concatenate(src...)
+func FilesToFile(file, del string, src ...string) error {
+	con, err := FilesToBytes(del, src...)
 	if err != nil {
 		return err
 	}
-	// log.Println("write file", file)
-	return ioutil.WriteFile(file, []byte(con), 0666)
+	return ioutil.WriteFile(file, con, 0666)
 }
