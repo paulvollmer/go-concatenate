@@ -1,2 +1,10 @@
 language: go
-script: go test -v -cover
+go:
+  - 1.6
+  - 1.7
+
+install:
+  - go get -u github.com/golang/lint/golint
+  - go get -t -v ./...
+
+script: make test
