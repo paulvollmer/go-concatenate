@@ -1,6 +1,9 @@
 package concatenate
 
-import "errors"
+import (
+	"errors"
+	"os"
+)
 
 // Manager manage a map of sources to concatenate
 type Manager map[string][]string
@@ -17,20 +20,34 @@ func (m *Manager) Set(name string, src ...string) {
 	(*m)[name] = src
 }
 
-// Process a given set
-func (m *Manager) Process(name string) error {
-	d, ok := (*m)[name]
-	if !ok {
-		return errors.New(name + " not found")
+// TotalFilesInSet return the number of files in a set
+func (m *Manager) TotalFilesInSet(name string) int {
+	return len((*m)[name])
+}
+
+// TotalFiles return the number of files
+func (m *Manager) TotalFiles() int {
+	counter := 0
+	for _, v := range *m {
+		counter += len(v)
 	}
-	err := FilesToFile(name, "\n", d...)
+	return counter
+}
+
+// Process a given set
+func (m *Manager) Process(filename string, perm os.FileMode) error {
+	d, ok := (*m)[filename]
+	if !ok {
+		return errors.New(filename + " not found")
+	}
+	err := FilesToFile(filename, perm, "\n", d...)
 	return err
 }
 
 // ProcessAll run the Process func at all sets
-func (m *Manager) ProcessAll() error {
+func (m *Manager) ProcessAll(perm os.FileMode) error {
 	for k, v := range *m {
-		err := FilesToFile(k, "\n", v...)
+		err := FilesToFile(k, perm, "\n", v...)
 		if err != nil {
 			return err
 		}

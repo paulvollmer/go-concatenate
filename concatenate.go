@@ -3,6 +3,7 @@ package concatenate
 import (
 	"errors"
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -61,10 +62,10 @@ func FilesToBytes(del string, src ...string) ([]byte, error) {
 }
 
 // FilesToFile concatenate a list of files by the given delimiter
-func FilesToFile(file, del string, src ...string) error {
+func FilesToFile(filename string, perm os.FileMode, del string, src ...string) error {
 	con, err := FilesToBytes(del, src...)
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(file, con, 0666)
+	return ioutil.WriteFile(filename, con, perm)
 }
