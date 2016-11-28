@@ -36,6 +36,16 @@ func Test_FilesToBytes_NotFound(t *testing.T) {
 	}
 }
 
+func Test_FilesToBytes_Ext(t *testing.T) {
+	src, err := FilesToBytes("-", "fixture/*.txt")
+	if err != nil {
+		t.Error(err)
+	}
+	if string(src) != "a1\na2\n-b1\nb2\n" {
+		t.Error("FilesToBytes not equal")
+	}
+}
+
 func Test_FilesToFile(t *testing.T) {
 	tmpTestFile := "tmp_test.txt"
 

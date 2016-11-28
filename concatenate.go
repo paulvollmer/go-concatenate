@@ -1,7 +1,9 @@
 package concatenate
 
 import (
+	"errors"
 	"io/ioutil"
+	"path/filepath"
 	"strings"
 )
 
@@ -23,16 +25,34 @@ func StringsToString(del string, src ...string) string {
 	return strings.Join(src, del)
 }
 
-// FilesToBytes concatenate a list of files by the given delimiter
+// FilesToBytes concatenate a list of files by the given delimiter.
+// you can set a matching pattern to select the sources you want to process.
 func FilesToBytes(del string, src ...string) ([]byte, error) {
 	var tmp []byte
+
 	check := len(src) - 1
 	for i, srcfile := range src {
-		d, err := ioutil.ReadFile(srcfile)
+		matches, err := filepath.Glob(srcfile)
 		if err != nil {
-			return []byte{}, err
+			return tmp, nil
 		}
-		tmp = append(tmp, d...)
+
+		totalMatches := len(matches)
+		//fmt.Println("GLOB", srcfile, matches)
+		if totalMatches == 0 {
+			return tmp, errors.New("cannot find " + srcfile)
+		}
+		for j, matchFiles := range matches {
+			d, err := ioutil.ReadFile(matchFiles)
+			if err != nil {
+				return tmp, err
+			}
+			tmp = append(tmp, d...)
+			if j < totalMatches-1 {
+				tmp = append(tmp, []byte(del)...)
+			}
+		}
+
 		if i < check {
 			tmp = append(tmp, []byte(del)...)
 		}
