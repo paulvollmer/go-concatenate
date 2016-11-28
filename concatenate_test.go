@@ -1,13 +1,12 @@
 package concatenate
 
 import (
-	"fmt"
 	"io/ioutil"
 	"testing"
 )
 
 func Test_BytesToBytes(t *testing.T) {
-	fmt.Println(string(BytesToBytes([]byte("-"), []byte("a1"), []byte("b1"))))
+	// fmt.Println(string(BytesToBytes([]byte("-"), []byte("a1"), []byte("b1"))))
 	if string(BytesToBytes([]byte("-"), []byte("a1"), []byte("b1"))) != string([]byte("a1-b1")) {
 		t.Error("BytesToBytes return not equal, must be 'a1-b1'")
 	}
@@ -24,7 +23,7 @@ func Test_FilesToBytes(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Printf("S %q", src)
+	// fmt.Printf("S %q", src)
 	if string(src) != "a1\na2\n-b1\nb2\n" {
 		t.Error("FilesToBytes not equal")
 	}
@@ -48,14 +47,4 @@ func Test_FilesToFile(t *testing.T) {
 	if string(d) != "a1\na2\n\nb1\nb2\n" {
 		t.Error("FilesToFile not equal")
 	}
-}
-
-func Test_Manager(t *testing.T) {
-	m := NewManager()
-	m.Set("tmp_test2.txt", "fixture/a.txt", "fixture/b.txt")
-	err := m.ProcessAll()
-	if err != nil {
-		t.Error(err)
-	}
-	m.Process("tmp_test2.txt")
 }
