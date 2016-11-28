@@ -49,7 +49,7 @@ func Test_FilesToBytes_Ext(t *testing.T) {
 func Test_FilesToFile(t *testing.T) {
 	tmpTestFile := "tmp_test.txt"
 
-	err := FilesToFile(tmpTestFile, "\n", "fixture/a.txt", "fixture/b.txt")
+	err := FilesToFile(tmpTestFile, 0755, "\n", "fixture/a.txt", "fixture/b.txt")
 	if err != nil {
 		t.Error(err)
 	}
