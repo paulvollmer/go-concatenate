@@ -3,6 +3,7 @@ package concatenate
 import (
 	"errors"
 	"os"
+	"path/filepath"
 )
 
 // Manager manage a map of sources to concatenate
@@ -53,4 +54,55 @@ func (m *Manager) ProcessAll(perm os.FileMode) error {
 		}
 	}
 	return nil
+}
+
+func (m *Manager) ExistSource(src string) bool {
+	for _, v := range *m {
+		for _, v2 := range v {
+			if v2 == src {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// GetDirs return a list of all target directories
+func (m *Manager) GetDirs() []string {
+	dirs := make([]string, 0)
+	tmpIndex := make(map[string]int, 0)
+	for k := range *m {
+		kdir := filepath.Dir(k)
+		_, ok := tmpIndex[kdir]
+		// fmt.Println(k, kdir, ok)
+		if !ok {
+			dirs = append(dirs, kdir)
+			tmpIndex[kdir] = 1
+		} else {
+			tmpIndex[kdir]++
+		}
+	}
+	return dirs
+}
+
+// GetDirsOfSources return a list of all source directories
+func (m *Manager) GetDirsOfSources() []string {
+	dirs := make([]string, 0)
+	tmpIndex := make(map[string]int, 0)
+	for _, target := range *m {
+		// fmt.Println(target)
+		for _, fname := range target {
+			kdir := filepath.Dir(fname)
+			_, ok := tmpIndex[kdir]
+			// fmt.Println(kdir, ok)
+			if !ok {
+				dirs = append(dirs, kdir)
+				tmpIndex[kdir] = 1
+			} else {
+				tmpIndex[kdir]++
+			}
+		}
+
+	}
+	return dirs
 }
