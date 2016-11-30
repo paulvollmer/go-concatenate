@@ -1,5 +1,5 @@
 # go-concatenate [![Build Status](https://travis-ci.com/paulvollmer/go-concatenate.svg?token=Wck9khUHkFjieXJypmaZ&branch=master)](https://travis-ci.com/paulvollmer/go-concatenate)
-go concatenate utility lib
+go concatenate utility with focus on speed.
 
 
 ## Usage

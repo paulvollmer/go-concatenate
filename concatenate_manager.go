@@ -7,6 +7,7 @@ import (
 )
 
 // Manager manage a map of sources to concatenate
+// TODO: chacke file body to faster concatenate files
 type Manager map[string][]string
 
 // NewManager return a new Manager element
@@ -16,14 +17,28 @@ func NewManager() *Manager {
 	return &m
 }
 
-// Set a name and its sources to the Manager
-func (m *Manager) Set(name string, src ...string) {
+// Add a name and its sources to the Manager
+func (m *Manager) Add(name string, src ...string) bool {
+	_, ok := (*m)[name]
+	if ok {
+		return false
+	}
 	(*m)[name] = src
+	return true
 }
 
-// TotalFilesInSet return the number of files in a set
-func (m *Manager) TotalFilesInSet(name string) int {
-	return len((*m)[name])
+// AddSource add a list of sources to a specific set
+func (m *Manager) AddSource(name string, src ...string) bool {
+	_, ok := (*m)[name]
+	if ok {
+		return false
+	}
+	(*m)[name] = append((*m)[name], src...)
+	return true
+}
+
+func (m *Manager) TotalSets() int {
+	return len((*m))
 }
 
 // TotalFiles return the number of files
@@ -33,6 +48,11 @@ func (m *Manager) TotalFiles() int {
 		counter += len(v)
 	}
 	return counter
+}
+
+// TotalFilesInSet return the number of files in a set
+func (m *Manager) TotalFilesInSet(name string) int {
+	return len((*m)[name])
 }
 
 // Process a given set
@@ -56,6 +76,7 @@ func (m *Manager) ProcessAll(perm os.FileMode) error {
 	return nil
 }
 
+// ExistSource return true i the given source was found at the sets
 func (m *Manager) ExistSource(src string) bool {
 	for _, v := range *m {
 		for _, v2 := range v {

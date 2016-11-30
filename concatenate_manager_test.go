@@ -4,11 +4,32 @@ import (
 	"testing"
 )
 
+func Test_Manager_Add(t *testing.T) {
+	m := NewManager()
+	tmpTarget := "tmp_test1.txt"
+	added := m.Add(tmpTarget, []string{"hello.txt", "world.txt"}...)
+	if added != true {
+		t.Error("Add result not equal")
+	}
+	if len((*m)) != 1 {
+		t.Error("Add total number of sets not equal")
+	}
+	if (*m)[tmpTarget][0] != "hello.txt" {
+		t.Error("Add set not equal, must be 'hello'")
+	}
+	if (*m)[tmpTarget][1] != "world.txt" {
+		t.Error("Add set not equal, must be")
+	}
+}
+
 var inputFiles = []string{"fixture/a.txt", "fixture/b.txt"}
 
 func Test_Manager_Process(t *testing.T) {
 	m := NewManager()
-	m.Set("tmp_test1.txt", inputFiles...)
+	added := m.Add("tmp_test1.txt", inputFiles...)
+	if !added {
+		t.Error("Add result not equal")
+	}
 
 	if m.TotalFilesInSet("tmp_test1.txt") != 2 {
 		t.Error("TotalFilesInSet not equal")
@@ -28,6 +49,13 @@ func Test_Manager_Process(t *testing.T) {
 		t.Error("GetDirsOfSources not equal")
 	}
 
+	if !m.ExistSource("fixture/a.txt") {
+		t.Error("ExistSource not equal, must exist")
+	}
+	if m.ExistSource("fixture/not_exist.txt") {
+		t.Error("ExistSource not equal, must not exist")
+	}
+
 	err := m.Process("tmp_test1.txt", 0777)
 	if err != nil {
 		t.Error(err)
@@ -36,7 +64,7 @@ func Test_Manager_Process(t *testing.T) {
 
 func Test_Manager_ProcessAll(t *testing.T) {
 	m := NewManager()
-	m.Set("tmp_test2.txt", inputFiles...)
+	m.Add("tmp_test2.txt", inputFiles...)
 
 	err := m.ProcessAll(0777)
 	if err != nil {

@@ -5,10 +5,24 @@ import (
 	"testing"
 )
 
+var TestTableBytesToBytes = []struct {
+	del    string
+	source [][]byte
+	result string
+}{
+	{"", [][]byte{}, ""},
+	{"", [][]byte{[]byte("a1")}, "a1"},
+	{"-", [][]byte{[]byte("a1"), []byte("b1")}, "a1-b1"},
+	{"\n", [][]byte{[]byte("a1"), []byte("b1"), []byte("c1")}, "a1\nb1\nc1"},
+	{"\n", [][]byte{[]byte("a1\n"), []byte("b1"), []byte("c1")}, "a1\n\nb1\nc1"},
+}
+
 func Test_BytesToBytes(t *testing.T) {
-	result := BytesToBytes([]byte("-"), []byte("a1"), []byte("b1"))
-	if string(result) != string([]byte("a1-b1")) {
-		t.Error("BytesToBytes return not equal, must be 'a1-b1'")
+	for _, tt := range TestTableBytesToBytes {
+		result := BytesToBytes([]byte(tt.del), tt.source...)
+		if string(result) != string([]byte(tt.result)) {
+			t.Errorf("BytesToBytes return not equal, must be %q\n", tt.result)
+		}
 	}
 }
 
