@@ -1,6 +1,7 @@
 package concatenate
 
 import (
+	"bytes"
 	"errors"
 	"io/ioutil"
 	"os"
@@ -10,15 +11,16 @@ import (
 
 // BytesToBytes concatenate a list of bytes by the given delimiter
 func BytesToBytes(del []byte, src ...[]byte) []byte {
-	var tmp []byte
-	check := len(src) - 1
-	for i, v := range src {
-		tmp = append(tmp, v...)
-		if i < check {
-			tmp = append(tmp, del...)
+	var buffer bytes.Buffer
+	totalSrc := len(src)
+	totalSrcMinusOne := totalSrc - 1
+	for i := 0; i < totalSrc; i++ {
+		buffer.Write(src[i])
+		if i < totalSrcMinusOne {
+			buffer.Write(del)
 		}
 	}
-	return tmp
+	return buffer.Bytes()
 }
 
 // StringsToString concatenate a list of strings by the given delimiter
