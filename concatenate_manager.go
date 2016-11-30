@@ -59,8 +59,11 @@ func (m *Manager) ProcessAll(perm os.FileMode) error {
 func (m *Manager) ExistSource(src string) bool {
 	for _, v := range *m {
 		for _, v2 := range v {
-			if v2 == src {
-				return true
+			matches, _ := filepath.Glob(v2)
+			for _, item := range matches {
+				if item == src {
+					return true
+				}
 			}
 		}
 	}
