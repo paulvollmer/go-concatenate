@@ -8,14 +8,24 @@ import (
 
 // Manager manage a map of sources to concatenate
 // TODO: chacke file body to faster concatenate files
-type Manager map[string][]string
+type Manager map[string]Sources
 
 // NewManager return a new Manager element
 func NewManager() *Manager {
 	m := Manager{}
-	m = make(map[string][]string, 0)
+	m = make(map[string]Sources, 0)
 	return &m
 }
+
+// // AddSource add a list of sources to a specific set
+// func (s *Sources) Add(src ...string) bool {
+// 	_, ok := (*m)[name]
+// 	if ok {
+// 		return false
+// 	}
+// 	(*m)[name] = append((*m)[name], src...)
+// 	return true
+// }
 
 // Add a name and its sources to the Manager
 func (m *Manager) Add(name string, src ...string) bool {
@@ -27,16 +37,7 @@ func (m *Manager) Add(name string, src ...string) bool {
 	return true
 }
 
-// AddSource add a list of sources to a specific set
-func (m *Manager) AddSource(name string, src ...string) bool {
-	_, ok := (*m)[name]
-	if ok {
-		return false
-	}
-	(*m)[name] = append((*m)[name], src...)
-	return true
-}
-
+// TotalSets return the number of total sets
 func (m *Manager) TotalSets() int {
 	return len((*m))
 }
@@ -50,9 +51,13 @@ func (m *Manager) TotalFiles() int {
 	return counter
 }
 
-// TotalFilesInSet return the number of files in a set
+// TotalFilesInSet return the number of files of a sepcific set
 func (m *Manager) TotalFilesInSet(name string) int {
-	return len((*m)[name])
+	d, ok := (*m)[name]
+	if !ok {
+		return 0
+	}
+	return len(d)
 }
 
 // Process a given set
