@@ -4,12 +4,19 @@ import (
 	"testing"
 )
 
+func Test_NewManager(t *testing.T) {
+	m := NewManager()
+	if m == nil {
+		t.Error("NewManager not type of Manager")
+	}
+}
+
 func Test_Manager_Add(t *testing.T) {
 	m := NewManager()
 	tmpTarget := "tmp_test1.txt"
 	added := m.Add(tmpTarget, []string{"hello.txt", "world.txt"}...)
 	if added != true {
-		t.Error("Add result not equal")
+		t.Errorf("Add %q already exist", tmpTarget)
 	}
 	if len((*m)) != 1 {
 		t.Error("Add total number of sets not equal")
@@ -20,6 +27,12 @@ func Test_Manager_Add(t *testing.T) {
 	if (*m)[tmpTarget][1] != "world.txt" {
 		t.Error("Add set not equal, must be")
 	}
+
+	// added = m.AddSource(tmpTarget, "foo.txt")
+	// if added != true {
+	// 	t.Errorf("AddSource %q already exist", tmpTarget)
+	// }
+
 }
 
 var inputFiles = []string{"fixture/a.txt", "fixture/b.txt"}
