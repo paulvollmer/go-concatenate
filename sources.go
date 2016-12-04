@@ -1,8 +1,6 @@
 package concatenate
 
-import (
-	"path/filepath"
-)
+import "path/filepath"
 
 // Sources store a list of source paths
 type Sources []string
@@ -28,6 +26,17 @@ func (s *Sources) Add(src string) bool {
 	return true
 }
 
+// TODO: AddSource add a list of sources to a specific set
+// func (s *Sources) Add(src ...string) bool {
+// OLD CODE FROM Manager
+// 	_, ok := (*m)[name]
+// 	if ok {
+// 		return false
+// 	}
+// 	(*m)[name] = append((*m)[name], src...)
+// 	return true
+// }
+
 // GetFilepaths return a list of filepaths for the given source.
 // if the source is a glob, the function return all matched paths.
 func (s Sources) GetFilepaths(i int) ([]string, error) {
@@ -46,6 +55,26 @@ func (s *Sources) GetAllFilepaths() ([]string, error) {
 		paths = append(paths, glob...)
 	}
 	return paths, nil
+}
+
+// GetAllDirs get dir and get all dirs
+func (s *Sources) GetAllDirs() ([]string, error) {
+	filepaths, err := s.GetAllFilepaths()
+	if err != nil {
+		return []string{}, err
+	}
+
+	cache := make([]string, 0)
+	unique := make(map[string]int, 0)
+	for _, v := range filepaths {
+		tmpDir := filepath.Dir(v)
+		_, ok := unique[tmpDir]
+		if !ok {
+			unique[tmpDir] = 1
+			cache = append(cache, tmpDir)
+		}
+	}
+	return cache, nil
 }
 
 // Total return the total number of sources
