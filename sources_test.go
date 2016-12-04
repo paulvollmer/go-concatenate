@@ -174,3 +174,40 @@ func Test_Sources_GetDirs(t *testing.T) {
 		})
 	}
 }
+
+func Test_Sources_ExistSource(t *testing.T) {
+	testCases := []struct {
+		src      []string
+		exist    string
+		expected bool
+	}{
+		{
+			src:      []string{"fixture/a.txt"},
+			exist:    "fixture/a.txt",
+			expected: true,
+		},
+		{
+			src:      []string{"fixture/a.txt"},
+			exist:    "fixture/not_exist.txt",
+			expected: false,
+		},
+		{
+			src:      []string{"fixture/c/*.txt"},
+			exist:    "fixture/c/c1.txt",
+			expected: true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(fmt.Sprintf("%q", tc.src), func(t *testing.T) {
+
+			m := Sources{}
+			m = make([]string, len(tc.src))
+			m = tc.src
+
+			if m.ExistSource(tc.exist) != tc.expected {
+				t.Errorf("ExistSource %q not equal, must be %v", tc.exist, tc.expected)
+			}
+		})
+	}
+}
