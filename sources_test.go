@@ -60,6 +60,21 @@ func Test_Sources_Add(t *testing.T) {
 					// if addOk == true {
 					// 	t.Error("Add must be fasle")
 					// }
+
+					// if len((*m)) != 1 {
+					// 	t.Error("Add total number of sets not equal")
+					// }
+					// if (*m)[tmpTarget][0] != "hello.txt" {
+					// 	t.Error("Add set not equal, must be 'hello'")
+					// }
+					// if (*m)[tmpTarget][1] != "world.txt" {
+					// 	t.Error("Add set not equal, must be")
+					// }
+
+					// added = m.AddSource(tmpTarget, "foo.txt")
+					// if added != true {
+					// 	t.Errorf("AddSource %q already exist", tmpTarget)
+					// }
 				}
 			}
 
@@ -112,6 +127,48 @@ func Test_Sources_GetAllFilepaths(t *testing.T) {
 			for i := range f {
 				if f[i] != tc.expected[i] {
 					t.Errorf("GetFilepaths not equal at %v", i)
+				}
+			}
+		})
+	}
+}
+
+func Test_Sources_GetDirs(t *testing.T) {
+	testCases := []struct {
+		src      []string
+		expected []string
+	}{
+		{
+			src:      []string{"fixture/a.txt"},
+			expected: []string{"fixture"},
+		},
+		{
+			src:      []string{"fixture/a.txt", "fixture/b.txt"},
+			expected: []string{"fixture"},
+		},
+		{
+			src:      []string{"fixture/d/**/*"},
+			expected: []string{"fixture/d/d1", "fixture/d/d2"},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(fmt.Sprintf("%q", tc.src), func(t *testing.T) {
+
+			m := Sources{}
+			m = make([]string, len(tc.src))
+			m = tc.src
+
+			d, err := m.GetAllDirs()
+			if err != nil {
+				t.Error("")
+			}
+			if len(d) != len(tc.expected) {
+				t.Errorf("GetAllDirs lenght not equal, must be %v", len(tc.expected))
+			}
+			for i, v := range d {
+				if v != tc.expected[i] {
+					t.Errorf("GetAllDirs not equal, must be %v", tc.expected[i])
 				}
 			}
 		})
