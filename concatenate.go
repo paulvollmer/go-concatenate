@@ -37,11 +37,10 @@ func FilesToBytes(del string, src ...string) ([]byte, error) {
 	for i, srcfile := range src {
 		matches, err := filepath.Glob(srcfile)
 		if err != nil {
-			return tmp, nil
+			return tmp, err
 		}
 
 		totalMatches := len(matches)
-		//fmt.Println("GLOB", srcfile, matches)
 		if totalMatches == 0 {
 			return tmp, errors.New("cannot find " + srcfile)
 		}
