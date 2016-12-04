@@ -81,3 +81,16 @@ func (s *Sources) GetAllDirs() ([]string, error) {
 func (s *Sources) Total() int {
 	return len(*s)
 }
+
+// ExistSource return true i the given source was found at the sets
+func (s *Sources) ExistSource(src string) bool {
+	for _, path := range *s {
+		matches, _ := filepath.Glob(path)
+		for _, item := range matches {
+			if item == src {
+				return true
+			}
+		}
+	}
+	return false
+}
