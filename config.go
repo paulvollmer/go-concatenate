@@ -52,20 +52,20 @@ func (c Config) Add(name string, src ...string) bool {
 	return true
 }
 
-// // ExistSource return true i the given source was found at the sets
-// func (m *Manager) ExistSource(src string) bool {
-// 	for _, v := range m.Config {
-// 		for _, v2 := range v {
-// 			matches, _ := filepath.Glob(v2)
-// 			for _, item := range matches {
-// 				if item == src {
-// 					return true
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return false
-// }
+// ExistSource return true i the given source was found at the sets
+func (c Config) ExistSource(src string) bool {
+	for _, v := range c {
+		for _, v2 := range v {
+			matches, _ := filepath.Glob(v2)
+			for _, item := range matches {
+				if item == src {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
 
 // GetDirs return a list of all target directories
 func (m *Manager) GetDirs() []string {
