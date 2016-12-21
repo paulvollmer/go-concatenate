@@ -11,9 +11,10 @@ import (
 var version = "0.1.0"
 
 func usage() {
-	fmt.Println("Usage: fastconcat out [in]")
+	fmt.Println("Usage: concat [-flags] || out [in]")
 	fmt.Println("Flags:")
 	flag.PrintDefaults()
+	fmt.Println("\nIf you've found a bug please open an issue at github.com/paulvollmer/go-concatenate/issues")
 }
 
 func main() {
