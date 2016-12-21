@@ -19,13 +19,13 @@ func Test_Config(t *testing.T) {
 	}{
 		{
 			data: map[string][]string{
-				"test-1": []string{"fixture/a.txt"},
+				"test-1": {"fixture/a.txt"},
 			},
 			totalFiles: 1,
 		},
 		{
 			data: map[string][]string{
-				"test-1": []string{"fixture/a.txt", "fixture/b.txt"},
+				"test-1": {"fixture/a.txt", "fixture/b.txt"},
 			},
 			totalFiles: 2,
 		},

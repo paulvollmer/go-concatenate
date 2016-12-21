@@ -14,5 +14,8 @@ build:
 lint:
 	@golint
 
+fmt:
+	gofmt -s -w .
+
 clean:
 	@rm -f tmp*.txt
