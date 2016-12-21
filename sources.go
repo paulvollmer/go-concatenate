@@ -1,6 +1,9 @@
 package concatenate
 
-import "path/filepath"
+import (
+	"errors"
+	"path/filepath"
+)
 
 // Sources store a list of source paths
 type Sources []string
@@ -12,35 +15,46 @@ func NewSources() *Sources {
 	return &s
 }
 
-// Add a source to the Sources array. if src already exist, return false.
-func (s *Sources) Add(src string) bool {
+// Add a filepath to the Sources array. if src is an empty string or already exist, return an error.
+func (s *Sources) Add(src string) error {
 	if src == "" {
-		return false
+		return errors.New("src is an empty string")
 	}
 	for _, v := range *s {
 		if v == src {
-			return false
+			return errors.New("src already exist")
 		}
 	}
 	*s = append(*s, src)
-	return true
+	return nil
 }
 
-// TODO: AddSource add a list of sources to a specific set
-// func (s *Sources) Add(src ...string) bool {
-// OLD CODE FROM Manager
-// 	_, ok := (*m)[name]
-// 	if ok {
-// 		return false
-// 	}
-// 	(*m)[name] = append((*m)[name], src...)
-// 	return true
-// }
+// AddSources add a list of sources to the array
+func (s *Sources) AddSources(src ...string) error {
+	for _, v := range src {
+		err := s.Add(v)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// Get the source of the given index
+func (s Sources) Get(i int) (string, error) {
+	if i < s.Total() {
+		return s[i], nil
+	}
+	return "", errors.New("index out of range")
+}
 
 // GetFilepaths return a list of filepaths for the given source.
 // if the source is a glob, the function return all matched paths.
 func (s Sources) GetFilepaths(i int) ([]string, error) {
-	return filepath.Glob(s[i])
+	if i < s.Total() {
+		return filepath.Glob(s[i])
+	}
+	return []string{}, errors.New("index out of range")
 }
 
 // GetAllFilepaths return a list of all filepaths

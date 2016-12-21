@@ -12,13 +12,30 @@ func Test_NewManager(t *testing.T) {
 	}
 }
 
-func Test_Manager(t *testing.T) {
+func Test_Manager_ReadConfig(t *testing.T) {
+	m := NewManager()
+	err := m.ReadConfig("./fixture/sample.json")
+	if err != nil {
+		t.Error(err)
+	}
+	if m.Config.TotalSets() != 1 {
+		t.Error("Total sets not equal. must be 1")
+	}
+
+	m2 := NewManager()
+	err = m2.ReadConfig("./fixture/file_not_exist.json")
+	if err == nil {
+		t.Error("Missing Error")
+	}
+}
+
+func Test_Manager_ProcessAll(t *testing.T) {
 	testCases := []struct {
 		config Config
 	}{
 		{
 			config: Config{
-				"test-1": []string{"src-1"},
+				"tmp_test_1.txt": []string{"./fixture/a.txt", "./fixture/b.txt"},
 			},
 		},
 	}
@@ -28,30 +45,18 @@ func Test_Manager(t *testing.T) {
 
 			m := NewManager()
 			m.Config = tc.config
+			err := m.ProcessAll(0755)
+			if err != nil {
+				t.Error(err)
+			}
 
-			// if m.TotalFilesInSet("tmp_test1.txt") != 2 {
-			// 	t.Error("TotalFilesInSet not equal")
-			// }
-			// if m.TotalFiles() != 2 {
-			// 	t.Error("TotalFiles not equal")
-			// }
+			total, err := m.Config.TotalFilesInSet("tmp_test_1.txt")
+			if err != nil {
+				t.Error(err)
+			}
+			if total != 2 {
+				t.Error("TotalFilesInSet not equal")
+			}
 		})
 	}
-
-}
-
-// 	err := m.Process("tmp_test1.txt", 0777)
-// 	if err != nil {
-// 		t.Error(err)
-// 	}
-// }
-
-func Test_Manager_ProcessAll(t *testing.T) {
-	// m := NewManager()
-	// m.Add("tmp_test2.txt", inputFiles...)
-	//
-	// err := m.ProcessAll(0777)
-	// if err != nil {
-	// 	t.Error(err)
-	// }
 }
