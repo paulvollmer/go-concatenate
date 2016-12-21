@@ -1,4 +1,4 @@
-all: build test lint
+all: build test lint fmt
 
 test:
 	@go test -v -cover
@@ -15,7 +15,7 @@ lint:
 	@golint
 
 fmt:
-	gofmt -s -w .
+	@gofmt -s -d -e .
 
 clean:
 	@rm -f tmp*.txt
