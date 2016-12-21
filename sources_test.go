@@ -113,7 +113,7 @@ func Test_Sources_GetAllFilepaths(t *testing.T) {
 				t.Error(err)
 			}
 			if len(f) != len(tc.expected) {
-				t.Errorf("GetAllFilepaths lenght not equal, must be %v", len(tc.expected))
+				t.Errorf("GetAllFilepaths length not equal, must be %v", len(tc.expected))
 			}
 			for i := range f {
 				if f[i] != tc.expected[i] {
@@ -155,7 +155,7 @@ func Test_Sources_GetDirs(t *testing.T) {
 				t.Error("")
 			}
 			if len(d) != len(tc.expected) {
-				t.Errorf("GetAllDirs lenght not equal, must be %v", len(tc.expected))
+				t.Errorf("GetAllDirs length not equal, must be %v", len(tc.expected))
 			}
 			for i, v := range d {
 				if v != tc.expected[i] {
