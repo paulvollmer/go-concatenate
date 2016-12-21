@@ -1,4 +1,4 @@
-# go-concatenate [![Build Status](https://travis-ci.org/paulvollmer/go-concatenate.svg?branch=master)](https://travis-ci.com/paulvollmer/go-concatenate)
+# go-concatenate [![Build Status](https://travis-ci.org/paulvollmer/go-concatenate.svg?branch=master)](https://travis-ci.com/paulvollmer/go-concatenate) [![Report](https://goreportcard.com/badge/github.com/paulvollmer/go-concatenate)](https://goreportcard.com/report/github.com/paulvollmer/go-concatenate)
 golang concatenate package and cli with focus on speed.
 
 
