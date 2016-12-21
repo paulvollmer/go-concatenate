@@ -8,6 +8,7 @@ import (
 // Config store a map of sources to concatenate.
 type Config map[string]Sources
 
+// NewConfig return a new Config element
 func NewConfig() *Config {
 	c := Config{}
 	c = make(map[string]Sources, 0)
@@ -42,47 +43,43 @@ func (c Config) TotalFilesInSet(name string) (int, error) {
 	return len(paths), err
 }
 
-// Add a new set (the name) and its sources (the filepaths) to the config.
-func (c Config) Add(name string, src ...string) bool {
+// AddSet a new set (the name) and its sources (the filepaths) to the config.
+func (c Config) AddSet(name string, src ...string) error {
 	_, ok := c[name]
 	if ok {
-		return false
+		return fmt.Errorf("set with name %q does not exist", name)
 	}
-	c[name] = src
-	return true
+	newSources := NewSources()
+	err := newSources.AddSources(src...)
+	if err != nil {
+		return err
+	}
+	c[name] = *newSources
+	return nil
 }
 
 // ExistSource return true i the given source was found at the sets
 func (c Config) ExistSource(src string) bool {
 	for _, v := range c {
-		for _, v2 := range v {
-			matches, _ := filepath.Glob(v2)
-			for _, item := range matches {
-				if item == src {
-					return true
-				}
-			}
+		if v.ExistSource(src) {
+			return true
 		}
 	}
 	return false
 }
 
 // GetDirs return a list of all target directories
-func (m *Manager) GetDirs() []string {
+func (m *Manager) GetDirs() ([]string, error) {
 	dirs := make([]string, 0)
-	tmpIndex := make(map[string]int, 0)
-	for k := range m.Config {
-		kdir := filepath.Dir(k)
-		_, ok := tmpIndex[kdir]
-		// fmt.Println(k, kdir, ok)
-		if !ok {
-			dirs = append(dirs, kdir)
-			tmpIndex[kdir] = 1
-		} else {
-			tmpIndex[kdir]++
+	// tmpIndex := make(map[string]int, 0)
+	for _, v := range m.Config {
+		tmpDirs, err := v.GetAllDirs()
+		if err != nil {
+			return dirs, err
 		}
+		dirs = append(dirs, tmpDirs...)
 	}
-	return dirs
+	return dirs, nil
 }
 
 // GetDirsOfSources return a list of all source directories

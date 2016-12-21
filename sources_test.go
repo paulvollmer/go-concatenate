@@ -17,24 +17,29 @@ func Test_NewSources(t *testing.T) {
 
 func Test_Sources_Add(t *testing.T) {
 	testCases := []struct {
-		src           []string
-		expectedOK    bool
-		expectedTotal int
+		src             []string
+		expectedIsError bool
+		expectedTotal   int
 	}{
 		{
-			src:           []string{""},
-			expectedOK:    false,
-			expectedTotal: 0,
+			src:             []string{""},
+			expectedIsError: false,
+			expectedTotal:   0,
 		},
 		{
-			src:           []string{"src-1"},
-			expectedOK:    true,
-			expectedTotal: 1,
+			src:             []string{"src-1"},
+			expectedIsError: true,
+			expectedTotal:   1,
 		},
 		{
-			src:           []string{"fixture/a.txt", "fixture/b.txt"},
-			expectedOK:    true,
-			expectedTotal: 2,
+			src:             []string{"fixture/a.txt", "fixture/b.txt"},
+			expectedIsError: true,
+			expectedTotal:   2,
+		},
+		{
+			src:             []string{"fixture/a.txt", "fixture/b.txt", "fixture/a.txt"},
+			expectedIsError: false,
+			expectedTotal:   2,
 		},
 	}
 
@@ -45,42 +50,28 @@ func Test_Sources_Add(t *testing.T) {
 
 			// test to Add() sources and check if the result is equal
 			for addI, addV := range tc.src {
-				ok := m.Add(addV)
-				if ok != tc.expectedOK {
-					t.Errorf("Add %v failed", addI)
+				err := m.Add(addV)
+				if tc.expectedIsError {
+					if err != nil {
+						t.Errorf("Add %v missing error", addI)
+					}
 				}
 				// if the total expected size is higher than zero, we can check the array items
 				if tc.expectedTotal > 0 {
-					if (*m)[addI] != addV {
-						t.Errorf("Add source 0 not equal, must be %v", addV)
+					get, err := m.Get(addI)
+					if err == nil {
+						if get != addV {
+							t.Errorf("Add source %v not equal, must be %v", addI, addV)
+						}
 					}
 
-					// // att the same source a second time
-					// addOk = m.Add("a.txt")
-					// if addOk == true {
-					// 	t.Error("Add must be fasle")
-					// }
-
-					// if len((*m)) != 1 {
-					// 	t.Error("Add total number of sets not equal")
-					// }
-					// if (*m)[tmpTarget][0] != "hello.txt" {
-					// 	t.Error("Add set not equal, must be 'hello'")
-					// }
-					// if (*m)[tmpTarget][1] != "world.txt" {
-					// 	t.Error("Add set not equal, must be")
-					// }
-
-					// added = m.AddSource(tmpTarget, "foo.txt")
-					// if added != true {
-					// 	t.Errorf("AddSource %q already exist", tmpTarget)
-					// }
 				}
 			}
 
 			// final check the expected total size of the array
-			if len(*m) != tc.expectedTotal {
-				t.Errorf("Add total sources not equal, must be %v", tc.expectedTotal)
+			mTotal := m.Total()
+			if mTotal != tc.expectedTotal {
+				t.Errorf("Add total sources (%v) not equal, must be %v", mTotal, tc.expectedTotal)
 			}
 
 		})

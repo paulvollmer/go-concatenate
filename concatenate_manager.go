@@ -7,20 +7,21 @@ import (
 	"os"
 )
 
-// TODO: cache file content to faster concatenate a set
+// Manager create a manager to organize the source files and process the data.
 type Manager struct {
 	Config Config
-	Cache  string
+	// TODO: cache file content to faster concatenate a set if only one source has changed.
+	// Cache string
 }
 
 // NewManager return a new Manager element
 func NewManager() *Manager {
 	m := Manager{}
 	m.Config = *NewConfig()
-	// m = make(map[string]Sources, 0)
 	return &m
 }
 
+// ReadConfig reads a json configuration file and set the data to the Config variable
 func (m *Manager) ReadConfig(filename string) error {
 	d, err := ioutil.ReadFile(filename)
 	if err != nil {

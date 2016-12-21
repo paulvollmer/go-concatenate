@@ -40,7 +40,7 @@ func Test_Config(t *testing.T) {
 		t.Run(fmt.Sprint(i), func(t *testing.T) {
 			cfg := NewConfig()
 			for name, src := range tc.data {
-				cfg.Add(name, src...)
+				cfg.AddSet(name, src...)
 			}
 
 			if cfg.TotalSets() != 1 {
